@@ -13,15 +13,26 @@ using UnityEngine.Playables;
 
     private void Update()
     {
-        if (!hasPlay)
+        if (currentChapter == Chapter.Chapter2)
         {
-            if (start)
+            if (door.isOpen || door2.isOpen)
             {
-                UTCplayable.Play();
-                hasPlay = true;
-            } 
+                start02 = true;
+            }
+
+            if (!hasPlay)
+            {
+                if (start02)
+                {
+                    UTCplayable02.Play();
+                    hasPlay = true;
+                }
+            }
+            if (UTCplayable02.time > 8.8)
+            {
+                UTC02.SetActive(false);
+                currentChapter = Chapter.Chapter3;
+            }
         }
-        if (UTCplayable.time > 8.8)
-            UTC.SetActive(false);
     }
 }
