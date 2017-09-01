@@ -13,23 +13,27 @@ public class Action1 : MonoBehaviour {
     public GameObject UTC;
 
     void Update () {
-        if (startbook.EventNowHappen)
+        if (currentChapter == Chapter.Chapter1)
         {
-            UTCplayable.Play();
-            startbook.EventNowHappen = false;
-        }
-        if (Get)
-            UTCplayable.Resume();
-        else if (UTCplayable.time > 12.42)
-        {
-            UTCplayable.Pause();
-            Happyball.SetActive(true);
-        }
-            
-        if (UTCplayable.time > 19.15)
-        {
-            UTCplayable.Stop();
-            UTC.SetActive(false);
+            if (startbook.EventNowHappen)
+            {
+                UTCplayable01.Play();
+                startbook.EventNowHappen = false;
+            }
+            if (GetHappyBall)
+                UTCplayable01.Resume();
+            else if (UTCplayable01.time > 12.42)
+            {
+                UTCplayable01.Pause();
+                Happyball.SetActive(true);
+            }
+
+            if (UTCplayable01.time > 19.15)
+            {
+                UTCplayable01.Stop();
+                UTC01.SetActive(false);
+                currentChapter = Chapter.Chapter2;
+            }
         }
     }
 
