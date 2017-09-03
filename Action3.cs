@@ -26,29 +26,48 @@ public class Action3 : MonoBehaviour
 
     private void Update()
     {
-        
-        if (BeginToCry)
+        if (currentChapter == Chapter.Chapter3)
         {
-            UTCplayable.Play();
-            if(transform.localPosition != Vector3.zero)
+            
+            if (!isChangeWeather)
             {
-                UTCObject.transform.localPosition = Vector3.zero;
-                UTCObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                if (player.transform.position.x > 3f && player.transform.position.z < -15f)
+                {
+                    changeSkybox.currentSkyBox = ChangeSkybox.skybox.Falling;
+                    changeSkybox.CheckCurrentSky();
+                    isChangeWeather = true;
+                }
             }
-        }
-        if (NotCry)
-        {
-            foreach(SkinnedMeshRenderer M in meshRenders)
+            
+            if (NotCry)
             {
-                M.material.shader=TransparentShader;
-                NotCry = false;
+                if (!isNotCry)
+                {
+                    foreach (SkinnedMeshRenderer M in meshRenders)
+                    {
+                        M.material.shader = TransparentShader;
+                    }
+                    chapter3AudioSource.clip = chapter3AudioClips[2];
+                    chapter3AudioSource.loop = true;
+                    chapter3AudioSource.Play();
+                    isNotCry = true;
+                }
             }
-        }
-        if (Disappear)
-        {
-            UTC.SetActive(false);
-            Elephant.GetComponent<Rigidbody>().isKinematic = false;
-            Disappear = false;
+            if (Disappear)
+            {
+                UTC03.SetActive(false);
+                UTCplayable03.Stop();
+                Elephant.GetComponent<Rigidbody>().isKinematic = false;
+                fearBall.SetActive(true);
+                Disappear = false;
+                chapter3AudioSource.loop = false;
+                chapter3AudioSource.Stop();
+            }
+            if (GetFearBall)
+            {
+                TimeLine4.SetActive(true);
+                currentChapter = Chapter.Chapter4;
+            }
         }
     }
 }
