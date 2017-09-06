@@ -9,6 +9,8 @@ public class InputManager : MonoBehaviour {
     public SteamVR_TrackedObject TrackOBJ;
     public SteamVR_Controller.Device device;
 
+	public EmotionSys EmotionalBall;
+
     //determine which hand
     public bool isLefthand = false;
 
