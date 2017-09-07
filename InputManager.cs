@@ -163,17 +163,34 @@ public class InputManager : MonoBehaviour {
             //when using the fear ball
             if (EmotionalBall.currentIndex == 2)
             {
-
+                if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+                {
+                    ChangeAndCheckSkybox();
+                }
             }
             //when using the angry ball
             if (EmotionalBall.currentIndex == 3)
             {
-
+                if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+                {
+                    Sword.SetActive(true);
+                }
+                if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+                {
+                    Sword.SetActive(false);
+                }
             }
             //when using the sad ball
             if (EmotionalBall.currentIndex == 4)
             {
-               
+                if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+                {
+                    spotLight.SetActive(true);
+                }
+                if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+                {
+                    spotLight.SetActive(false);
+                }
             }
         }
         else
@@ -188,6 +205,21 @@ public class InputManager : MonoBehaviour {
                 HandCol.SetActive(false);
                 HandModel.SetActive(true);
             }
+        }
+    }
+
+    void SwipeLeft()
+    {
+        EmotionalBall.SwipeLeft();
+    }
+    void SwipeRight()
+    {
+        EmotionalBall.SwipeRight();
+    }
+    void InitEmotionalBalls()
+    {
+        EmotionalBall.InitBalls();
+    }
         }
     }
 }
