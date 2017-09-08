@@ -220,6 +220,13 @@ public class InputManager : MonoBehaviour {
     {
         EmotionalBall.InitBalls();
     }
-        }
+
+	void ChangeAndCheckSkybox()
+    {
+        mySkybox.currentSkyBox++;
+        if (mySkybox.currentSkyBox > ChangeSkybox.skybox.Night)
+            mySkybox.currentSkyBox = ChangeSkybox.skybox.Day;
+        //Debug.Log(mySkybox.currentSkyBox);
+        mySkybox.CheckCurrentSky();
     }
 }
