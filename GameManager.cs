@@ -67,6 +67,18 @@ public class GameManager : MonoBehaviour {
     private bool isNotCry = false;
     private bool countTo2 = false;
 
+	//Chapter4
+    public GameObject TimeLine4;
+    public bool GetAngryBall = false;
+    public GameObject AngryBall;
+    public PlayerHealth playerHealth;
+    public float Cp4_ToVoice2Timer;
+    private bool isVoice1Play = false;
+    private bool beginCountToVoice2 = false;
+    public AudioClip[] chapter4AudioClips;
+    public AudioSource chapter4AudioSource;
+    public AudioSource playerAudioSource;
+
 	void Start () {
         collectionNum = 0;
         currentChapter = Chapter.Chapter1;
@@ -210,5 +222,53 @@ public class GameManager : MonoBehaviour {
                 currentChapter = Chapter.Chapter4;
             }
         }
+
+		//Chapter04
+        if (currentChapter == Chapter.Chapter4)
+        {
+            if(player.transform.position.z > -13f)
+            {
+                if (!isVoice1Play)
+                {
+                    chapter4AudioSource.clip = chapter4AudioClips[0];
+                    chapter4AudioSource.loop = false;
+                    chapter4AudioSource.Play();
+                    isVoice1Play = true;
+                    beginCountToVoice2 = true;
+                }
+            }
+            if (beginCountToVoice2)
+            {
+                Cp4_ToVoice2Timer += Time.deltaTime;
+                if (Cp4_ToVoice2Timer > 7)
+                {
+                    playerAudioSource.Play();
+                    chapter4AudioSource.clip = chapter4AudioClips[1];
+                    chapter4AudioSource.loop = true;
+                    chapter4AudioSource.Play();
+                    beginCountToVoice2 = false;
+                }
+            }
+            if (GetAngryBall)
+            {
+                playerHealth.HP.gameObject.SetActive(true);
+                if (!playerHealth.Alive)
+                {
+                    LoadLevel.levelName = "BadEnd";
+                    LoadLevel.Trigger();
+                }
+                else
+                {
+                    if (KillEnemyNum == 5)
+                    {
+                        chapter4AudioSource.clip = chapter4AudioClips[2];
+                        chapter4AudioSource.loop = false;
+                        chapter4AudioSource.Play();
+                        TimeLine4.SetActive(false);
+                        TimeLine5.SetActive(true);
+                        currentChapter = Chapter.Chapter5;
+                    }
+                }
+            }
 	}
 }
