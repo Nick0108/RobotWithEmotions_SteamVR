@@ -5,11 +5,21 @@ using UnityEngine;
 public class InputManager : MonoBehaviour {
 
     
+    public EmotionSys EmotionalBall;
+    public ChangeSkybox mySkybox;
+    public GameObject spotLight;
+
+    public GameObject Sword;
+
     //basic to identify the controller
     public SteamVR_TrackedObject TrackOBJ;
     public SteamVR_Controller.Device device;
 
-	public EmotionSys EmotionalBall;
+    //for garbing and throwing
+    public GameObject MoveableOBJRelease;
+    public float throwForce = 1.5f;
+    public GameObject HandCol;
+    public GameObject HandModel;
 
     //determine which hand
     public bool isLefthand = false;
@@ -40,7 +50,10 @@ public class InputManager : MonoBehaviour {
         TeleportLine.gameObject.SetActive(false);
         TeleporterTargetObject.SetActive(false);
         TouchLast_x = 0;
-   }
+
+        mySkybox.currentSkyBox = ChangeSkybox.skybox.Day;
+        mySkybox.CheckCurrentSky();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -221,12 +234,70 @@ public class InputManager : MonoBehaviour {
         EmotionalBall.InitBalls();
     }
 
-	void ChangeAndCheckSkybox()
+
+    void ChangeAndCheckSkybox()
     {
         mySkybox.currentSkyBox++;
         if (mySkybox.currentSkyBox > ChangeSkybox.skybox.Night)
             mySkybox.currentSkyBox = ChangeSkybox.skybox.Day;
         //Debug.Log(mySkybox.currentSkyBox);
         mySkybox.CheckCurrentSky();
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        //Grabing and Throwing
+        if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+        {
+            GrabbingObj(other);
+        }
+        if (device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+        {
+            ThrowingObj(other);
+        }
+    }
+
+    void GrabbingObj(Collider other)
+    {
+        if (other != null)
+        {
+            if (other.CompareTag("EmotionalBall"))
+            {
+                other.GetComponent<EmotionalBallOBJ>().PickupBall();
+                device.TriggerHapticPulse(2000);
+            }
+            if (other.CompareTag("Collectable"))
+            {
+                other.gameObject.GetComponent<Collectable>().Read();
+                if (other.gameObject.GetComponent<Collectable>().CanHold)
+                {
+                    other.transform.SetParent(gameObject.transform);
+                    other.GetComponent<Rigidbody>().isKinematic = true;
+                }
+                device.TriggerHapticPulse(2000);
+            }
+            if (other.CompareTag("Door"))
+            {
+                other.gameObject.GetComponent<DoorOpen>().isOpen = true;
+                other.gameObject.GetComponent<DoorOpen>().ControllDoor();
+                device.TriggerHapticPulse(2000);
+            }
+        }
+    }
+
+    void ThrowingObj(Collider other)
+    {
+        if (other.CompareTag("Collectable"))
+        {
+            other.GetComponent<Collectable>().Release();
+            if (other.GetComponent<Collectable>().CanHold)
+            {
+                other.transform.SetParent(MoveableOBJRelease.transform);
+                Rigidbody otherRigidbody = other.GetComponent<Rigidbody>();
+                otherRigidbody.isKinematic = false;
+                otherRigidbody.velocity = device.velocity * throwForce;
+                otherRigidbody.angularVelocity = device.angularVelocity;
+            }
+        }
     }
 }
