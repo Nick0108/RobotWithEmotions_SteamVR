@@ -91,6 +91,12 @@ public class GameManager : MonoBehaviour {
     public GameObject SpotLighting;
     public AudioSource chapter5AudioSource;
 
+	//chapter6
+    public GameObject TimeLine6;
+    public RotateAndCombine combine;
+    public bool GetLastBall = false;
+    public float CombineTimer;
+
 	void Start () {
         collectionNum = 0;
         currentChapter = Chapter.Chapter1;
@@ -313,6 +319,31 @@ public class GameManager : MonoBehaviour {
                     emotionSys.InitBalls();
                     emotionSys.IndexIsLock = true;
                     currentChapter = Chapter.Chapter6;
+                }
+            }
+        }
+		//Chapter06
+        if (currentChapter == Chapter.Chapter6)
+        {
+            if (GetLastBall)
+            {
+                combine.Combine = true;
+                CombineTimer += Time.deltaTime;
+                if(CombineTimer > 15.0f)
+                {
+                    if (CheckTrueEndCondition())
+                    {
+                        //player.transform.position = new Vector3(-1.5f, 0, -11f);
+                        iTween.MoveTo(player, new Vector3(-1.5f, 0, -11f), 3.0f);
+                        TimeLine6.SetActive(false);
+                        TimeLine7.SetActive(true);
+                        currentChapter = Chapter.Chapter7;
+                    }
+                    else
+                    {
+                        LoadLevel.levelName = "NormalEnd";
+                        LoadLevel.Trigger();
+                    }
                 }
             }
         }
