@@ -79,6 +79,18 @@ public class GameManager : MonoBehaviour {
     public AudioSource chapter4AudioSource;
     public AudioSource playerAudioSource;
 
+	//Chapter5
+    public GameObject TimeLine5;
+    public bool GetSadBall = false;
+    public GameObject BlackWall;
+    public EmotionSys emotionSys;
+    public VideoPlayer Lastvideo;
+    public GameObject Head;
+    public GameObject rightHand;
+    public bool hasPlayed = false;
+    public GameObject SpotLighting;
+    public AudioSource chapter5AudioSource;
+
 	void Start () {
         collectionNum = 0;
         currentChapter = Chapter.Chapter1;
@@ -270,5 +282,39 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
+		}
+
+		//Chapter05
+        if (currentChapter == Chapter.Chapter5)
+        {
+            if (GetSadBall)
+            {
+                player.transform.position = new Vector3(-1f, 0, -10f);
+                BlackWall.SetActive(true);
+                emotionSys.IndexIsLock = true;
+            }
+            if (Vector3.Angle(Head.transform.forward, BlackWall.transform.forward) < 60 && Vector3.Angle(rightHand.transform.forward, BlackWall.transform.forward) < 60 && SpotLighting.activeInHierarchy)
+            {
+                if (!hasPlayed)
+                {
+                    Lastvideo.Play();
+                    chapter5AudioSource.Play();
+                    hasPlayed = true;
+                }
+            }
+            if (Lastvideo.isPlaying)
+            {
+                if (Lastvideo.time > 22.4f)
+                {
+                    BlackWall.SetActive(false);
+                    player.transform.position = new Vector3(-1f, 0, -11f);
+                    TimeLine6.SetActive(true);
+                    emotionSys.IndexIsLock = false;
+                    emotionSys.InitBalls();
+                    emotionSys.IndexIsLock = true;
+                    currentChapter = Chapter.Chapter6;
+                }
+            }
+        }
 	}
 }
