@@ -6,8 +6,7 @@ using UnityEngine.Playables;
 using UnityEngine.Video;
 
 public class GameManager : MonoBehaviour {
-    
-	public enum Chapter
+    public enum Chapter
     {
         Chapter1,
         Chapter2,
@@ -18,6 +17,7 @@ public class GameManager : MonoBehaviour {
         Chapter7,
     }
     public static int collectionNum;
+    public static int KillEnemyNum;
     public static Chapter currentChapter;
     public GameObject player;
     private SteamVR_LoadLevel LoadLevel;
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour {
     private bool isNotCry = false;
     private bool countTo2 = false;
 
-	//Chapter4
+    //Chapter4
     public GameObject TimeLine4;
     public bool GetAngryBall = false;
     public GameObject AngryBall;
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour {
     public AudioSource chapter4AudioSource;
     public AudioSource playerAudioSource;
 
-	//Chapter5
+    //Chapter5
     public GameObject TimeLine5;
     public bool GetSadBall = false;
     public GameObject BlackWall;
@@ -91,14 +91,23 @@ public class GameManager : MonoBehaviour {
     public GameObject SpotLighting;
     public AudioSource chapter5AudioSource;
 
-	//chapter6
+    //chapter6
     public GameObject TimeLine6;
     public RotateAndCombine combine;
     public bool GetLastBall = false;
     public float CombineTimer;
 
-	void Start () {
+    //chapter7
+    public int MaxCollectionNum = 20;
+    public GameObject TimeLine7;
+    public PlayableDirector trueEnd;
+    public float trueEndTimer;
+    public bool TrueEndhasplayed = false;
+
+
+    void Start () {
         collectionNum = 0;
+        KillEnemyNum = 0;
         currentChapter = Chapter.Chapter1;
         LoadLevel = gameObject.GetComponent<SteamVR_LoadLevel>();
         //Chapter03
@@ -108,9 +117,22 @@ public class GameManager : MonoBehaviour {
         ToVoice2Timer = 0;
     }
 
+    void Update()
+    {
+        //for testing
+        if (testing)
+        {
+            currentChapter = ChangeChapter;
+            KillEnemyNum = killEnemyNum;
+            testing = false;
+        }
+        else
+        {
+            ChangeChapter = currentChapter;
+            killEnemyNum = KillEnemyNum;
+        }
 
-	void update(){
-		//Chapter01
+        //Chapter01
         if (currentChapter == Chapter.Chapter1)
         {
             if (startbook.EventNowHappen)
@@ -240,8 +262,7 @@ public class GameManager : MonoBehaviour {
                 currentChapter = Chapter.Chapter4;
             }
         }
-
-		//Chapter04
+        //Chapter04
         if (currentChapter == Chapter.Chapter4)
         {
             if(player.transform.position.z > -13f)
@@ -288,9 +309,8 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
-		}
-
-		//Chapter05
+        }
+        //Chapter05
         if (currentChapter == Chapter.Chapter5)
         {
             if (GetSadBall)
@@ -322,7 +342,7 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-		//Chapter06
+        //Chapter06
         if (currentChapter == Chapter.Chapter6)
         {
             if (GetLastBall)
@@ -347,5 +367,31 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-	}
+        //Chapter07
+        if (currentChapter == Chapter.Chapter7)
+        {
+            if (!TrueEndhasplayed)
+            {
+                iTween.MoveTo(player, new Vector3(1.5f, 0, -11f), 2.0f);
+                trueEnd.Play();
+                TrueEndhasplayed = true;
+            }
+            trueEndTimer += Time.deltaTime;
+            if (trueEndTimer > 27)
+            {
+                LoadLevel.levelName = "TrueEnd";
+                LoadLevel.Trigger();
+            }
+        }
+    }
+
+    bool CheckTrueEndCondition()
+    {
+        bool isTrueEnd = false;
+        if(collectionNum == MaxCollectionNum)
+        {
+            isTrueEnd = true;
+        }
+        return isTrueEnd;
+    }
 }
